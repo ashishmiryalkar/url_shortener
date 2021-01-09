@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,300&display=swap" rel="stylesheet">
+    <link href="{% static 'styles.css' %}">
+    <style>
+        body{
+            background: cadetblue;
+        }
+
+        .show-text {
+            font-size: 1.3rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        textarea{
+            outline: none;
+            text-decoration: none;
+            border: none;
+            background-color: cadetblue;
+            border-bottom: solid black 3px;
+        }
+
+        .input-text-area{
+            margin-top:30px;
+            text-align: center;
+        }
+
+        .button-class{
+            background-color: yellowgreen;
+            padding: 10px;
+        }
+
+        #error-msg{
+            text-align: center;
+            color: red;
+            font-size: 1.25rem;
+        }
+
+        span {
+            padding-left: 5rem;
+            font-size: 1.25rem;
+        }
+
+        #clicks{
+            text-align: center;
+            font-size: 1.25rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body style="margin-top: 10%">
+    <div class="show-text">
+        Copy Paste or Type in the url below and hit submit
+    </div>
+    <div class="input-text-area">
+        <textarea rows="10" cols="100" id="actual-url" name="input_url"></textarea>
+        <button class="button-class" type="submit" onclick="submitButtonClicked()" value="Submit">Submit</button>
+    </div>
+    <div id="error-msg"></div>
+    <div class="input-text-area">
+        <span id="short-url"></span>
+    </div>
+    <div id="clicks"></div>
+    <script>
+        submitButtonClicked = () =>{
+            let enteredUrl = document.getElementById('actual-url').value.trim();
+            let shortUrl = document.getElementById('short-url');
+            let click = document.getElementById('clicks');
+            if (enteredUrl === "" || enteredUrl === undefined || enteredUrl === null){
+                return document.getElementById('error-msg').innerText = "text cannot be empty"
+            }
+            document.getElementById('error-msg').innerText = null
+            let hostName = window.location.hostname;
+            let response = fetch('/short-url/create_short_url_api/',{
+                method:'POST',
+                headers:{
+                    'Content-type':'application/json'
+                },
+                body:JSON.stringify({
+                    'actual_url':enteredUrl
+                })
+            }).then(resp => resp.json()).then(resp => {
+                shortUrl.innerText = "Shortend url:  "+resp["shortened_url"];
+                click.innerHTML = "Total clicks:   "+resp['clicks_count'];
+            })
+            return response;
+        }
+    </script>
+</body>
+{#<script>#}
+{#    let textToShow = "Copy Paste";#}
+{#    let inputTextElement = document.getElementById("show-text");#}
+{#    let timer = 1000;#}
+{#    class SetTextAndTimer {#}
+{#        constructor(stringToShow,timer) {#}
+{#            this.stringToShow = stringToShow;#}
+{#            this.timer = timer;#}
+{#        }#}
+{#    }#}
+{#    let listOfTexts = [new SetTextAndTimer(textToShow,1)]#}
+{#    let textToAppend = " or Type in the url that you want to shorten.".split('')#}
+{#    textToAppend.forEach(eachChar => {#}
+{#        timer = 2000;#}
+{#        textToShow = textToShow+eachChar;#}
+{#        listOfTexts.push(new SetTextAndTimer(textToShow,timer));#}
+{##}
+{#    })#}
+{#    function appendListAndDisplay(stringToShow){#}
+{#        console.log(stringToShow,'h2')#}
+{#        inputTextElement.innerText = stringToShow#}
+{#    }#}
+{#    console.log(listOfTexts)#}
+{#    listOfTexts.forEach(text => {#}
+{#        console.log(text.stringToShow,'str here',text.timer);#}
+{#        let t =setTimeout(()=> {#}
+{#            inputTextElement.innerHTML = text.stringToShow;#}
+{#        },text.timer);#}
+{#        console.log(t,typeof t);#}
+{#        clearTimeout(t)#}
+{#    }#}
+{#        );#}
+{#</script>#}
+</html>
