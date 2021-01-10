@@ -55,7 +55,6 @@ class Redierect(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         try:
-            print(kwargs,kwargs["short_url"])
             url_object = URLShortener.objects.get(short_url = kwargs["short_url"])
             self.url = url_object.actual_url
             url_object.clicks_count = url_object.clicks_count+1     #increments short url click everytime the page is redierected.
